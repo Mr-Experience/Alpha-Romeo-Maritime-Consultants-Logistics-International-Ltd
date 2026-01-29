@@ -14,10 +14,7 @@
 </head>
 
 <body>
-    <!-- Preloader -->
-    <div class="preloader">
-        <div class="spinner"></div>
-    </div>
+
 
     <div class="fleets-page" id="top-anchor">
 
@@ -561,14 +558,7 @@
         window.addEventListener('DOMContentLoaded', updateNavActiveState);
         // --- End of Nav Logic ---
 
-        window.addEventListener('load', () => {
-            const preloader = document.querySelector('.preloader');
-            if (preloader) {
-                setTimeout(() => {
-                    preloader.classList.add('hidden');
-                }, 300);
-            }
-        });
+
     </script>
 </body>
 
