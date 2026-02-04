@@ -4,13 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operations - Romeo Alpha maritime consultancy</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <title>Operations | Romeo Alpha Maritime</title>
+    <meta name="description"
+        content="Browse our professional maritime operations, including vessel chartering, offshore support, marine security, and logistics solutions.">
+    <link rel="canonical" href="https://romeoalpha.com/operations.html">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="footer_styles.css">
     <link rel="stylesheet" href="operations.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="translations.js" defer></script>
 </head>
 
 <body>
@@ -300,186 +306,8 @@
 
         window.addEventListener('DOMContentLoaded', renderCards);
 
-        // Header Logic (Reuse from other pages)
-        const noticeHeader = document.querySelector('.floating-notice');
-        const noticeCloseBtn = document.querySelector('.floating-notice .close-icon-container');
-        const mainHeader = document.querySelector('.main-header');
-        const operationsPage = document.querySelector('.operations-page');
-        const mobileMenu = document.querySelector('.mobile-menu-dropdown');
-
-        if (noticeCloseBtn) {
-            noticeCloseBtn.addEventListener('click', () => {
-                noticeHeader.style.display = 'none';
-                mainHeader.style.top = '0';
-                operationsPage.style.paddingTop = '80px';
-                if (mobileMenu) mobileMenu.style.top = '80px';
-            });
-        }
-
-        const toggleBtn = document.querySelector('.mobile-menu-toggle');
-        const hamburgerIcon = document.querySelector('.icon-hamburger');
-        const closeIcon = document.querySelector('.icon-close');
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                const isOpen = mobileMenu.classList.toggle('open');
-                if (mainHeader.style.top === '0px') {
-                    mobileMenu.style.top = '80px';
-                } else {
-                    mobileMenu.style.top = '128px';
-                }
-                if (isOpen) {
-                    hamburgerIcon.style.display = 'none';
-                    closeIcon.style.display = 'block';
-                } else {
-                    hamburgerIcon.style.display = 'block';
-                    closeIcon.style.display = 'none';
-                }
-            });
-        }
-
-        // Language Selector logic
-        const langSelector = document.getElementById('language-selector');
-        const currentLangText = document.getElementById('current-lang-text');
-        const langOptions = document.querySelectorAll('.lang-option');
-
-        const translations = {
-            'en': {
-                'Operations Page Title': 'Our Operations',
-                'Operations Page Subtitle': 'Explore our range of professional maritime and offshore services.',
-                'Search Placeholder': 'Search for a service...',
-                'Category All': 'All Services',
-                'Category Offshore': 'Offshore Support',
-                'Category Logistics': 'Marine Logistics',
-                'Category Charter': 'Vessel Charter',
-                'Category Port': 'Port & Coastal Services',
-                'No Results': 'No operations found matching your search.',
-                'About us': 'About us',
-                'Operations': 'Operations',
-                'Our fleets': 'Our fleets',
-                'Our team': 'Our team',
-                'Careers': 'Careers',
-                'Contact us': 'Contact us',
-                'Get Quotes': 'Get quotes',
-                'Scroll Top': 'Top'
-            },
-            'es': {
-                'Operations Page Title': 'Nuestras Operaciones',
-                'Operations Page Subtitle': 'Explore nuestra gama de servicios profesionales marítimos y offshore.',
-                'Search Placeholder': 'Buscar un servicio...',
-                'Category All': 'Todos los Servicios',
-                'Category Offshore': 'Soporte Offshore',
-                'Category Logistics': 'Logística Marina',
-                'Category Charter': 'Alquiler de Buques',
-                'Category Port': 'Servicios Portuarios y Costeros',
-                'No Results': 'No se encontraron operaciones que coincidan con su búsqueda.',
-                'About us': 'Sobre nosotros',
-                'Operations': 'Operaciones',
-                'Our fleets': 'Nuestras flotas',
-                'Our team': 'Nuestro equipo',
-                'Careers': 'Carreras',
-                'Contact us': 'Contáctenos',
-                'Get Quotes': 'Obtener cotización',
-                'Scroll Top': 'Cima'
-            },
-            'fr': {
-                'Operations Page Title': 'Nos Opérations',
-                'Operations Page Subtitle': 'Explorez notre gamme de services maritimes et offshore professionnels.',
-                'Search Placeholder': 'Rechercher un service...',
-                'Category All': 'Tous les Services',
-                'Category Offshore': 'Soutien Offshore',
-                'Category Logistics': 'Logistique Maritime',
-                'Category Charter': 'Affrètement de Navires',
-                'Category Port': 'Services Portuaires et Côtiers',
-                'No Results': 'Aucune opération trouvée correspondant à votre recherche.',
-                'About us': 'À propos de nous',
-                'Operations': 'Opérations',
-                'Our fleets': 'Nos flottes',
-                'Our team': 'Notre équipe',
-                'Careers': 'Carrières',
-                'Contact us': 'Contactez-nous',
-                'Get Quotes': 'Obtenir des devis',
-                'Scroll Top': 'Haut'
-            },
-            'de': {
-                'Operations Page Title': 'Unsere Einsätze',
-                'Operations Page Subtitle': 'Entdecken Sie unser Angebot an professionellen maritimen und Offshore-Dienstleistungen.',
-                'Search Placeholder': 'Nach einem Service suchen...',
-                'Category All': 'Alle Dienstleistungen',
-                'Category Offshore': 'Offshore-Unterstützung',
-                'Category Logistics': 'Maritime Logistik',
-                'Category Charter': 'Schiffscharter',
-                'Category Port': 'Hafen- und Küstendienste',
-                'No Results': 'Keine Einsätze gefunden, die Ihrer Suche entsprechen.',
-                'About us': 'Über uns',
-                'Operations': 'Einsätze',
-                'Our fleets': 'Unsere Flotten',
-                'Our team': 'Unser Team',
-                'Careers': 'Karriere',
-                'Contact us': 'Kontaktieren Sie uns',
-                'Get Quotes': 'Angebote anfordern',
-                'Scroll Top': 'Oben'
-            },
-            'zh': {
-                'Operations Page Title': '我们的业务',
-                'Operations Page Subtitle': '探索我们的专业海事和离岸服务范围。',
-                'Search Placeholder': '搜索服务...',
-                'Category All': '所有服务',
-                'Category Offshore': '离岸支持',
-                'Category Logistics': '海运物流',
-                'Category Charter': '船舶租赁',
-                'Category Port': '港口与沿海服务',
-                'No Results': '未找到匹配您搜索的业务。',
-                'About us': '关于我们',
-                'Operations': '业务',
-                'Our fleets': '我们的船队',
-                'Our team': '我们的团队',
-                'Careers': '职业生涯',
-                'Contact us': '联系我们',
-                'Get Quotes': '获取报价',
-                'Scroll Top': '顶部'
-            }
-        };
-
-        let currentLang = localStorage.getItem('romeoAlphaLang') || 'en';
-
-        function applyTranslations(lang) {
-            const langLabel = lang === 'zh' ? 'ZH' : lang.toUpperCase();
-            if (currentLangText) currentLangText.innerText = langLabel;
-
-            const trans = translations[lang] || translations['en'];
-
-            document.querySelectorAll('[data-translate]').forEach(el => {
-                const key = el.getAttribute('data-translate');
-                if (trans[key]) {
-                    el.innerHTML = trans[key];
-                }
-            });
-
-            document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-translate-placeholder');
-                if (trans[key]) {
-                    el.placeholder = trans[key];
-                }
-            });
-        }
-
-        if (langSelector) {
-            applyTranslations(currentLang);
-            langSelector.addEventListener('click', (e) => {
-                e.stopPropagation();
-                langSelector.classList.toggle('active');
-            });
-            document.addEventListener('click', () => langSelector.classList.remove('active'));
-            langOptions.forEach(opt => {
-                opt.addEventListener('click', () => {
-                    const l = opt.dataset.lang;
-                    localStorage.setItem('romeoAlphaLang', l);
-                    applyTranslations(l);
-                    location.reload(); // Simple reload to refresh all translated elements
-                });
-            });
-        }
+        // Initialize (Logic handled by translations.js)
+        window.addEventListener('DOMContentLoaded', updateNavActiveState);
     </script>
 </body>
 

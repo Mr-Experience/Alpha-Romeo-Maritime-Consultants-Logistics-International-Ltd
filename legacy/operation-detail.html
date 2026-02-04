@@ -4,13 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operation Detail - Romeo Alpha maritime consultancy</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <title>Operation Detail | Romeo Alpha Maritime</title>
+    <meta name="description"
+        content="Detailed information about our specialized maritime operations and offshore support services.">
+    <link rel="canonical" href="https://romeoalpha.com/operation-detail.html">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="footer_styles.css">
     <link rel="stylesheet" href="operation-detail.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="translations.js" defer></script>
 </head>
 
 <body>
@@ -276,38 +282,8 @@
 
         window.addEventListener('DOMContentLoaded', loadOperationDetail);
 
-        // Header and Mobile Menu Logic
-        const noticeHeader = document.querySelector('.floating-notice');
-        const noticeCloseBtn = document.querySelector('.floating-notice .close-icon-container');
-        const mainHeader = document.querySelector('.main-header');
-        const opDetailPage = document.querySelector('.operation-detail-page');
-        const mobileMenu = document.querySelector('.mobile-menu-dropdown');
-
-        if (noticeCloseBtn) {
-            noticeCloseBtn.addEventListener('click', () => {
-                noticeHeader.style.display = 'none';
-                mainHeader.style.top = '0';
-                opDetailPage.style.paddingTop = '80px';
-                if (mobileMenu) mobileMenu.style.top = '80px';
-            });
-        }
-
-        const toggleBtn = document.querySelector('.mobile-menu-toggle');
-        const hamburgerIcon = document.querySelector('.icon-hamburger');
-        const closeIcon = document.querySelector('.icon-close');
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                const isOpen = mobileMenu.classList.toggle('open');
-                if (isOpen) {
-                    hamburgerIcon.style.display = 'none';
-                    closeIcon.style.display = 'block';
-                } else {
-                    hamburgerIcon.style.display = 'block';
-                    closeIcon.style.display = 'none';
-                }
-            });
-        }
+        // Initialize (Logic handled by translations.js)
+        window.addEventListener('DOMContentLoaded', updateNavActiveState);
     </script>
 </body>
 

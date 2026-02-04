@@ -4,13 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Fleets - Romeo Alpha maritime consultancy</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <title>Our Fleets | Romeo Alpha Maritime</title>
+    <meta name="description"
+        content="Explore Romeo Alpha's modern and versatile fleet, designed for safety and efficiency in offshore support and global cargo transportation.">
+    <link rel="canonical" href="https://romeoalpha.com/fleets.html">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="footer_styles.css">
     <link rel="stylesheet" href="fleets.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="translations.js" defer></script>
 </head>
 
 <body>
@@ -397,145 +403,8 @@
             });
         }
 
-        // Language Selector
-        const langSelector = document.getElementById('language-selector');
-        const currentLangText = document.getElementById('current-lang-text');
-        const langOptions = document.querySelectorAll('.lang-option');
-        let currentLang = 'en';
-
-        const translations = {
-            'en': {
-                'Notice Welcome': 'Welcome to Romeo Alpha maritime consultancy & Logistics International Ltd',
-                'About us': 'About us',
-                'Operations': 'Operations',
-                'Our fleets': 'Our fleets',
-                'Our team': 'Our team',
-                'Careers': 'Careers',
-                'Contact us': 'Contact us',
-                'Get Quotes': 'Get quotes',
-                'Footer Subscribe Heading': 'Subscribe to our newsletter',
-                'Footer Subscribe Btn': 'Subscribe',
-                'Footer Business Heading': 'Doing Business Together',
-                'Footer Link What': 'What we do',
-                'Footer Link Fleets': 'Our fleets',
-                'Footer Link Offshore': 'Offshore services',
-                'Footer Link Security': 'Marine security',
-                'Footer Link Charter': 'Vessel charter & management',
-                'Footer Link Partnership': 'Partnerships',
-                'Footer Know Heading': 'Get to know Us',
-                'Footer Link About': 'About Alpha Romeo',
-                'Footer Link News': 'News & Insights',
-                'Footer Link Careers': 'Careers',
-                'Footer Link Contact': 'Contact us',
-                'Scroll Top': 'Top',
-                // Page Specific
-                'Fleets Hero Title': 'Our Global Fleet',
-                'Fleets Hero Subtitle': 'A versatile and modern fleet designed for safety, efficiency, and global reach.',
-                'Fleet Overview Title': 'Fleet Overview',
-                'Fleet Overview Desc': 'Romeo Alpha manages a diverse portfolio of vessels, ranging from large-scale cargo carriers to specialized offshore support units. Our commitment to maintenance excellence ensures high availability and operational reliability for our clients worldwide.',
-                'Total Vessels': 'Total Vessels',
-                'Vessel Types': 'Vessel Types',
-                'Avg Age': 'Average Age',
-                'Cat Offshore': 'Offshore Support Vessels',
-                'Cat Cargo': 'Cargo & Tanker Fleet',
-                'View Spec': 'View Specs'
-            },
-            'es': {
-                'Notice Welcome': 'Bienvenido a Romeo Alpha',
-                'About us': 'Sobre nosotros',
-                'Operations': 'Operaciones',
-                'Our fleets': 'Nuestras flotas',
-                'Our team': 'Nuestro equipo',
-                'Careers': 'Carreras',
-                'Contact us': 'Contáctenos',
-                'Get Quotes': 'Obtener cotización',
-                // ... (Truncated purely for brevity, would replicate others)
-                'Fleets Hero Title': 'Nuestra Flota Global',
-                'Fleets Hero Subtitle': 'Una flota versátil y moderna diseñada para la seguridad.',
-                'Fleet Overview Title': 'Descripción de la Flota',
-                'Fleet Overview Desc': 'Romeo Alpha gestiona una cartera diversa de buques.',
-                'Total Vessels': 'Buques Totales',
-                'Vessel Types': 'Tipos de Buques',
-                'Avg Age': 'Edad Promedio',
-                'Cat Offshore': 'Buques de Apoyo Offshore',
-                'Cat Cargo': 'Flota de Carga y Tanqueros',
-                'View Spec': 'Ver Especificaciones'
-            },
-            'fr': {
-                'Notice Welcome': 'Bienvenue chez Romeo Alpha',
-                'About us': 'À propos de nous',
-                'Operations': 'Opérations',
-                'Our fleets': 'Nos flottes',
-                'Our team': 'Notre équipe',
-                'Careers': 'Carrières',
-                'Contact us': 'Contactez-nous',
-                'Get Quotes': 'Obtenir des devis',
-                'Fleets Hero Title': 'Notre Flotte Mondiale',
-                'Fleets Hero Subtitle': 'Une flotte polyvalente et moderne.',
-                'Fleet Overview Title': 'Aperçu de la Flotte',
-                'Fleet Overview Desc': 'Romeo Alpha gère un portefeuille diversifié de navires.',
-                'Total Vessels': 'Total des Navires',
-                'Vessel Types': 'Types de Navires',
-                'Avg Age': 'Âge Moyen',
-                'Cat Offshore': 'Navires de Soutien Offshore',
-                'Cat Cargo': 'Flotte Cargo et Pétroliers',
-                'View Spec': 'Voir les Specs'
-            }
-        };
-
-        if (langSelector) {
-            function applyTranslations(lang) {
-                const langLabel = lang === 'zh' ? 'ZH' : lang.toUpperCase();
-                if (currentLangText) currentLangText.innerText = langLabel;
-                const elements = document.querySelectorAll('[data-translate]');
-                elements.forEach(el => {
-                    const key = el.getAttribute('data-translate');
-                    if (translations[lang] && translations[lang][key]) {
-                        el.innerHTML = translations[lang][key];
-                    }
-                });
-            }
-
-            function initLanguage() {
-                const savedLang = localStorage.getItem('romeoAlphaLang');
-                if (savedLang && translations[savedLang]) {
-                    currentLang = savedLang;
-                } else {
-                    currentLang = 'en';
-                }
-                applyTranslations(currentLang);
-            }
-
-            // Force scroll to top on reload
-            if (history.scrollRestoration) {
-                history.scrollRestoration = 'manual';
-            } else {
-                window.onbeforeunload = function () {
-                    window.scrollTo(0, 0);
-                }
-            }
-
-            // Initialize Language
-            initLanguage();
-
-            langSelector.addEventListener('click', (e) => {
-                e.stopPropagation();
-                langSelector.classList.toggle('active');
-            });
-
-            document.addEventListener('click', () => {
-                langSelector.classList.remove('active');
-            });
-
-            langOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    const langCode = option.getAttribute('data-lang');
-                    currentLang = langCode;
-                    localStorage.setItem('romeoAlphaLang', langCode);
-                    applyTranslations(currentLang);
-                });
-            });
-        }
+        // Initialize (Logic handled by translations.js)
+        window.addEventListener('DOMContentLoaded', updateNavActiveState);
 
         // --- NEW: Automated Nav Active State Logic ---
         function updateNavActiveState() {
