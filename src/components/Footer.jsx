@@ -94,6 +94,7 @@ const Footer = () => {
                         <li><Link to="/#insights">{t('Footer Link News')}</Link></li>
                         <li><Link to="/careers">{t('Footer Link Careers')}</Link></li>
                         <li><Link to="/contact">{t('Footer Link Contact')}</Link></li>
+                        <li><Link to="/admin-login">Login</Link></li>
                     </ul>
                 </div>
             </div>
