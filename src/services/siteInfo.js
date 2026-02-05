@@ -1,11 +1,16 @@
 import { config } from '../config';
 
 export const fetchSiteInfo = async () => {
+    const token = localStorage.getItem('supabaseToken');
+    const headers = {
+        'apikey': config.supabaseAnonKey
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${config.supabaseUrl}/rest/v1/site_info?select=*`, {
-        headers: {
-            'apikey': config.supabaseAnonKey,
-            'Authorization': `Bearer ${localStorage.getItem('supabaseToken')}`
-        }
+        headers: headers
     });
     if (!response.ok) throw new Error('Failed to fetch site info');
     return response.json();
