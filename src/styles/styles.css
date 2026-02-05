@@ -421,7 +421,7 @@ body {
 
 
 .hero-cta {
-    margin-top: 24px;
+    margin-top: 8px;
     font-family: 'Manrope', sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -887,7 +887,6 @@ body {
 /* New FAQ Section - Clean Minimal Design */
 .faq-section-new {
     width: 100%;
-    min-height: 100vh;
     background-color: #FFFFFF;
     padding: 80px 140px;
     display: flex;
