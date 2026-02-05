@@ -147,14 +147,7 @@ const Contact = () => {
 
                 <div className="contact-container">
 
-                    {/* Left Panel: Support Person */}
-                    <div className="support-side-panel">
-                        <div className="support-image-wrapper">
-                            <img src="/images/support_rep_custom.jpg" alt="Customer Support Representative" />
-                        </div>
-                        <h3>{t('Support Text')}</h3>
-                        <Link to="/about" className="btn-about-company">{t('About Btn')}</Link>
-                    </div>
+
 
                     {/* Right Panel: Contact Form */}
                     <div className="contact-form-container">

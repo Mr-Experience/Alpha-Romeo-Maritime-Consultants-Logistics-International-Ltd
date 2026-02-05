@@ -141,12 +141,9 @@
     /* Restored to full width */
     width: 100%;
     padding: 0 24px;
-    display: grid;
-    /* Restored Grid */
-    grid-template-columns: 1fr 1.5fr;
-    /* Left panel, Right Form */
-    gap: 40px;
-    align-items: start;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     box-sizing: border-box;
 }
 
@@ -207,7 +204,8 @@
 
 /* Form Container (Right) */
 .contact-form-container {
-    width: calc(100% - 100px);
+    width: 100%;
+    max-width: 700px;
     background-color: #FFFFFF;
     padding: 40px;
     border-radius: 20px;
