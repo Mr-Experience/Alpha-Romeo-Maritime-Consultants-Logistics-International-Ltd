@@ -37,9 +37,9 @@ const Marketplace = () => {
                 title: item.title,
                 description: item.description,
                 image: item.image_url || '/images/hero-v3.jpg',
-                tags: item.category === 'sale' ? ['Available', 'Marketplace'] : ['Featured'],
-                cta: item.category === 'sale' ? 'Enquire' : 'Reach out',
-                price: item.price ? (item.price.toString().startsWith('$') ? item.price : `$${item.price}`) : null
+                tags: item.category === 'sale' ? [t('Marketplace Available'), t('Tag Marketplace')] : [t('Marketplace Featured')],
+                cta: item.category === 'sale' ? t('Enquire') : t('Reach out'),
+                price: item.price ? (item.price.toString().startsWith('₦') ? item.price : `₦${item.price}`) : null
             }));
 
             setAllOps([...operationsData, ...mappedDynamic]);
@@ -67,9 +67,12 @@ const Marketplace = () => {
                 <div className="operations-container">
                     <h1 className="operations-title">{t('Operations Page Title')}</h1>
                     <p className="operations-subtitle">{t('Operations Page Subtitle')}</p>
+                </div>
+            </section>
 
-
-
+            {/* Category Filters Section */}
+            <div className="marketplace-filters-section">
+                <div className="operations-container">
                     <div className="category-tabs-container">
                         <div className="category-tabs">
                             <button
@@ -99,30 +102,23 @@ const Marketplace = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            {/* Service Highlight Banner */}
+            {/* Simplified Service Highlight */}
             <div className="operations-container">
-                <div className="service-highlight-banner" style={{
-                    backgroundColor: '#F3FAFF',
-                    padding: '32px',
-                    borderRadius: '16px',
-                    marginBottom: '48px',
+                <div style={{
+                    padding: '24px 0',
+                    marginBottom: '40px',
+                    borderTop: '1px solid #eee',
+                    borderBottom: '1px solid #eee',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
-                    border: '1px solid #E5E7EB',
-                    textAlign: 'left'
+                    alignItems: 'center'
                 }}>
-                    <div style={{ maxWidth: '600px' }}>
-                        <h2 style={{ fontSize: '24px', color: '#001F3F', marginBottom: '8px' }}>Specialized Offshore & Marine Services</h2>
-                        <p style={{ color: '#4B5563', fontSize: '15px' }}>
-                            We provide expert servicing for <strong>Oil Rig Platforms</strong>, along with professional building and maintenance of <strong>House Boats</strong> and specialized marine vessels.
-                        </p>
-                    </div>
-                    <Link to="/contact">
-                        <button className="op-card-cta" style={{ width: 'auto', padding: '14px 32px' }}>Reach out to us</button>
-                    </Link>
+                    <p style={{ color: '#001F3F', fontSize: '16px', fontWeight: '500', margin: 0 }}>
+                        {t('Service Help Text')}
+                        <Link to="/contact" style={{ color: '#0056b3', marginLeft: '8px', fontWeight: '700', textDecoration: 'none' }}>{t('Reach out')}</Link>
+                    </p>
                 </div>
             </div>
 
@@ -152,8 +148,8 @@ const Marketplace = () => {
                                                 {t('See Details') || 'See Details'}
                                             </button>
                                         </Link>
-                                        <Link to={`/contact`} className="op-card-cta-link" style={{ textDecoration: 'none', flex: 1 }}>
-                                            <button className="op-card-cta">{t('Interested CTA')}</button>
+                                        <Link to={`/marketplace-inquiry/${op.id}`} className="op-card-cta-link" style={{ textDecoration: 'none', flex: 1 }}>
+                                            <button className="op-card-cta">{t('Reach out')}</button>
                                         </Link>
                                     </div>
                                 </div>

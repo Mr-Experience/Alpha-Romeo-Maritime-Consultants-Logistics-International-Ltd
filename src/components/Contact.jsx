@@ -4,14 +4,31 @@ import { useTranslation } from '../context/TranslationContext';
 import '../styles/contact.css';
 import { config } from '../config';
 import emailjs from '@emailjs/browser';
+import { fetchSiteInfo } from '../services/siteInfo';
+import { submitMessage } from '../services/messages';
 
 const Contact = () => {
     const { t } = useTranslation();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [siteInfo, setSiteInfo] = useState([]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        const loadInfo = async () => {
+            try {
+                const data = await fetchSiteInfo();
+                setSiteInfo(data);
+            } catch (err) {
+                console.error("Error loading contact info:", err);
+            }
+        };
+        loadInfo();
     }, []);
+
+    const getInfo = (key, fallback) => {
+        const found = siteInfo.find(info => info.info_key.toLowerCase().includes(key.toLowerCase()));
+        return found ? found.info_value : fallback;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,21 +48,7 @@ const Contact = () => {
 
         try {
             // 1. Save to Supabase Dashboard
-            const supabasePromise = fetch(`${config.supabaseUrl}/rest/v1/contact_messages`, {
-                method: 'POST',
-                headers: {
-                    'apikey': config.supabaseAnonKey,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify(payload)
-            }).then(async res => {
-                if (!res.ok) {
-                    const error = await res.json();
-                    throw new Error(`Dashboard Error: ${error.message || res.statusText}`);
-                }
-                return res;
-            });
+            const supabasePromise = submitMessage(payload);
 
             // 2. Send to Zoho Mail via EmailJS
             const emailjsPromise = emailjs.send(
@@ -104,7 +107,7 @@ const Contact = () => {
                         </div>
                         <div className="strip-text">
                             <h3>{t('Visit Office Heading')}</h3>
-                            <p>Portharcourt, Nigeria.</p>
+                            <p>{getInfo('address', 'Portharcourt, Nigeria.')}</p>
                         </div>
                     </div>
 
@@ -121,7 +124,7 @@ const Contact = () => {
                         </div>
                         <div className="strip-text">
                             <h3>{t('Lets Talk Heading')}</h3>
-                            <p>+234 814 409 1443</p>
+                            <p>{getInfo('phone', '+234 814 409 1443')}</p>
                             <span className="cta-text">{t('Call Us CTA')}</span>
                         </div>
                     </div>
@@ -139,7 +142,7 @@ const Contact = () => {
                         </div>
                         <div className="strip-text">
                             <h3>{t('Inbox Heading')}</h3>
-                            <p>info@Alpharomeo.com</p>
+                            <p>{getInfo('email', 'info@Alpharomeo.com')}</p>
                             <span className="cta-text">{t('Email Us CTA')}</span>
                         </div>
                     </div>

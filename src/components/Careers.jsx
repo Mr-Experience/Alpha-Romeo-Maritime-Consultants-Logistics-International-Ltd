@@ -40,27 +40,6 @@ const Careers = () => {
                     </div>
                 </div>
             </section>
-
-            {/* SECTION 2: Recruitment */}
-            <section className="career-section recruitment-section">
-                <div className="career-container">
-                    {/* LEFT: Text */}
-                    <div className="career-col-text">
-                        <span className="pre-heading">{t('Careers Label')}</span>
-                        <h2 className="main-heading recruitment-heading">{t('Recruitment Title')}</h2>
-                        <div className="body-text">
-                            <p>{t('Recruitment P1')}</p>
-                            <p>{t('Recruitment P2')}</p>
-                        </div>
-                        {/* Button */}
-                        <Link to="/contact" className="btn-career-cta">{t('Get In Touch')}</Link>
-                    </div>
-                    {/* RIGHT: Image */}
-                    <div className="career-col-image">
-                        <img src="/images/ads-gallery-1.jpg" alt={t('Recruitment Title')} className="career-image" />
-                    </div>
-                </div>
-            </section>
         </div>
     );
 };

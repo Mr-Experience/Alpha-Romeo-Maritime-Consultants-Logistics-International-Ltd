@@ -1,13 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { subscribeToNewsletter } from '../services/newsletter';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../context/TranslationContext';
 import { config } from '../config';
+import { fetchSiteInfo } from '../services/siteInfo';
 
 const Footer = () => {
     const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState('idle'); // idle, sending, success, error
     const [errorMessage, setErrorMessage] = useState('');
+    const [siteInfo, setSiteInfo] = useState([]);
+
+    useEffect(() => {
+        const loadInfo = async () => {
+            try {
+                const data = await fetchSiteInfo();
+                setSiteInfo(data);
+            } catch (err) {
+                console.error("Error loading footer info:", err);
+            }
+        };
+        loadInfo();
+    }, []);
+
+    const getInfo = (key, fallback) => {
+        const found = siteInfo.find(info => info.info_key.toLowerCase().includes(key.toLowerCase()));
+        return found ? found.info_value : fallback;
+    };
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -21,21 +41,7 @@ const Footer = () => {
         setErrorMessage('');
 
         try {
-            const response = await fetch(`${config.supabaseUrl}/rest/v1/newsletter_subscriptions`, {
-                method: 'POST',
-                headers: {
-                    'apikey': config.supabaseAnonKey,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify({ email, created_at: new Date().toISOString() })
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || 'Failed to subscribe');
-            }
-
+            await subscribeToNewsletter(email);
             setStatus('success');
             setEmail('');
         } catch (err) {
@@ -108,7 +114,7 @@ const Footer = () => {
             </div>
 
             <div className="footer-secondary-group">
-                <span>{t('Footer Address')}</span>
+                <span>{getInfo('address', t('Footer Address'))}</span>
             </div>
             <div className="copyright-group">
                 <span>{t('Copyright')}</span>

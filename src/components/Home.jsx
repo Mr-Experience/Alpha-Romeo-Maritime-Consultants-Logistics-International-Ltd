@@ -2,14 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../context/TranslationContext';
 import { getFaqs } from '../services/faq';
+import { fetchAds } from '../services/ads';
 
 const Home = () => {
     const { t } = useTranslation();
     const [faqItems, setFaqItems] = useState([]);
+    const [ads, setAds] = useState([]);
 
     useEffect(() => {
-        const faqs = getFaqs();
-        setFaqItems(faqs);
+        const loadFaqs = async () => {
+            const faqs = await getFaqs();
+            setFaqItems(faqs);
+        };
+        const loadAds = async () => {
+            try {
+                const data = await fetchAds();
+                setAds(data);
+            } catch (err) {
+                console.error("Ads loading error:", err);
+            }
+        };
+        loadFaqs();
+        loadAds();
     }, []);
 
     return (
@@ -166,22 +180,23 @@ const Home = () => {
                         <h2 className="faq-title">{t('FAQ Title') || 'Frequently Asked Questions'}</h2>
                     </div>
                     <div className="faq-list">
-                        {['FAQ_Q1', 'FAQ_Q2', 'FAQ_Q3', 'FAQ_Q4', 'FAQ_Q5'].map((key, index) => (
-                            <details key={index} className="faq-item-new" name="faq-accordion">
+                        {faqItems.map((faq, index) => (
+                            <details key={faq.id || index} className="faq-item-new" name="faq-accordion">
                                 <summary className="faq-question">
-                                    <span>{t(key)}</span>
+                                    <span>{faq.question}</span>
                                     <div className="faq-icon-wrapper">
                                         <svg className="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="6 9 12 15 18 9"></polyline>
                                         </svg>
                                     </div>
                                 </summary>
-                                <div className="faq-answer">
-                                    {t(`FAQ_A${index + 1}`)}
+                                <div className="faq-answer" style={{ whiteSpace: 'pre-wrap' }}>
+                                    {faq.answer}
                                 </div>
                             </details>
                         ))}
                     </div>
+
                 </div>
             </section>
 
@@ -210,20 +225,28 @@ const Home = () => {
                 </div>
                 <div className="ads-ship-strip">
                     <div className="ads-gallery-track">
-                        {/* Images - Simplified for React */}
-                        {[...Array(2)].map((_, i) => (
-                            <React.Fragment key={i}>
-                                <div className="ads-gallery-item"><img src="/images/ads-gallery-1.jpg" alt="Ship" className="ads-gallery-img" /></div>
-                                <div className="ads-gallery-item"><img src="/images/ads-gallery-2.jpg" alt="Workers" className="ads-gallery-img" /></div>
-                                <div className="ads-gallery-item"><img src="/images/ads-gallery-3.jpg" alt="Refinery" className="ads-gallery-img" /></div>
-                                <div className="ads-gallery-item"><img src="/images/ads-gallery-4.jpg" alt="Container" className="ads-gallery-img" /></div>
-                                <div className="ads-gallery-item"><img src="/images/ads-upload-1.jpg" alt="New Gallery 1" className="ads-gallery-img" /></div>
-                                <div className="ads-gallery-item"><img src="/images/ads-upload-2.jpg" alt="New Gallery 2" className="ads-gallery-img" /></div>
-                                <div className="ads-gallery-item"><img src="/images/ads-upload-3.jpg" alt="New Gallery 3" className="ads-gallery-img" /></div>
-                                <div className="ads-gallery-item"><img src="/images/ads-upload-4.jpg" alt="New Gallery 4" className="ads-gallery-img" /></div>
-                            </React.Fragment>
-                        ))}
+                        {ads.length > 0 ? (
+                            // Render Dynamic Ads
+                            [...ads, ...ads].map((ad, i) => (
+                                <div key={`${ad.id}-${i}`} className="ads-gallery-item">
+                                    <a href={ad.link_url || '#'} target="_blank" rel="noopener noreferrer">
+                                        <img src={ad.image_url} alt={ad.title} className="ads-gallery-img" />
+                                    </a>
+                                </div>
+                            ))
+                        ) : (
+                            // Fallback to existing static images
+                            [...Array(2)].map((_, i) => (
+                                <React.Fragment key={i}>
+                                    <div className="ads-gallery-item"><img src="/images/ads-gallery-1.jpg" alt="Ship" className="ads-gallery-img" /></div>
+                                    <div className="ads-gallery-item"><img src="/images/ads-gallery-2.jpg" alt="Workers" className="ads-gallery-img" /></div>
+                                    <div className="ads-gallery-item"><img src="/images/ads-gallery-3.jpg" alt="Refinery" className="ads-gallery-img" /></div>
+                                    <div className="ads-gallery-item"><img src="/images/ads-gallery-4.jpg" alt="Container" className="ads-gallery-img" /></div>
+                                </React.Fragment>
+                            ))
+                        )}
                     </div>
+
                 </div>
             </section>
 

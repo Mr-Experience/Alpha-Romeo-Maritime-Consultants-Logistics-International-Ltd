@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from '../context/TranslationContext';
 import { operationsData } from '../data/operationsData';
+import { ArrowLeft, Call, Sms, Information, CloseCircle, Home2, Edit } from 'iconsax-react';
+import { fetchSiteInfo } from '../services/siteInfo';
 import { fetchMarketplaceItems } from '../services/marketplace';
-import { ArrowLeft, Call, Sms, Information, CloseCircle, Home2 } from 'iconsax-react';
 import { config } from '../config';
 import emailjs from '@emailjs/browser';
 
@@ -11,15 +12,10 @@ const MarketplaceDetail = () => {
     const { id } = useParams();
     const { t } = useTranslation();
     const [item, setItem] = useState(null);
+    const [allItems, setAllItems] = useState([]);
+    const [sitePhone, setSitePhone] = useState('+2348066184330');
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
-    });
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -29,27 +25,32 @@ const MarketplaceDetail = () => {
     const loadItemDetails = async () => {
         try {
             setLoading(true);
-            // Search in static data first
-            let foundItem = operationsData.find(op => op.id.toString() === id);
 
-            if (!foundItem) {
-                // Search in dynamic data
-                const dynamicItems = await fetchMarketplaceItems();
-                const dynamicItem = dynamicItems.find(di => di.id.toString() === id);
-                if (dynamicItem) {
-                    foundItem = {
-                        id: dynamicItem.id,
-                        category: dynamicItem.category,
-                        title: dynamicItem.title,
-                        description: dynamicItem.description,
-                        image: dynamicItem.image_url || '/images/hero-v3.jpg',
-                        gallery: [dynamicItem.image_url].filter(Boolean),
-                        tags: dynamicItem.category === 'sale' ? ['Available', 'Marketplace'] : ['Featured'],
-                        price: dynamicItem.price
-                    };
-                }
-            }
+            // Fetch site info for phone number
+            try {
+                const info = await fetchSiteInfo();
+                const phoneItem = info.find(i => i.info_key === 'phone_primary');
+                if (phoneItem) setSitePhone(phoneItem.info_value);
+            } catch (err) { console.error("Site info fetch skip", err); }
 
+            // Fetch marketplace items for navigation
+            const dynamicItems = await fetchMarketplaceItems();
+            const all = [...operationsData, ...dynamicItems.map(di => ({
+                id: di.id,
+                category: di.category,
+                title: di.title,
+                description: di.description,
+                image: di.image_url || '/images/hero-v3.jpg',
+                gallery: di.gallery || [di.image_url].filter(Boolean),
+                tags: di.category === 'sale' ? [t('Marketplace Available'), t('Tag Marketplace')] : [t('Marketplace Featured')],
+                price: di.price ? (di.price.toString().startsWith('₦') ? di.price : `₦${di.price}`) : null,
+                availability: di.availability || t('Immediate'),
+                location: di.location || t('Default Location'),
+                dynamicTags: di.tags ? di.tags.split(',').map(t => t.trim()) : []
+            }))];
+            setAllItems(all);
+
+            const foundItem = all.find(op => op.id.toString() === id);
             if (foundItem) {
                 setItem(foundItem);
                 setActiveImage(foundItem.image);
@@ -63,74 +64,14 @@ const MarketplaceDetail = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-
-        const subject = `Inquiry: ${item.title} (ID: ${item.id})`;
-
-        try {
-            // 1. Save to Supabase Dashboard
-            const supabasePromise = fetch(`${config.supabaseUrl}/rest/v1/contact_messages`, {
-                method: 'POST',
-                headers: {
-                    'apikey': config.supabaseAnonKey,
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify({
-                    full_name: formData.name,
-                    email: formData.email,
-                    subject: subject,
-                    message: formData.message
-                })
-            }).then(async res => {
-                if (!res.ok) {
-                    const error = await res.json();
-                    throw new Error(`Dashboard Error: ${error.message || res.statusText}`);
-                }
-                return res;
-            });
-
-            // 2. Send to Zoho Mail via EmailJS
-            const emailjsPromise = emailjs.send(
-                config.emailjsServiceId,
-                config.emailjsTemplateId,
-                {
-                    name: formData.name,
-                    email: formData.email,
-                    subject: subject,
-                    message: formData.message,
-                    time: new Date().toLocaleString(),
-                    to_email: 'info@Alpharomeo.com'
-                },
-                config.emailjsPublicKey
-            ).catch(err => {
-                throw new Error(`Email Error: ${err.text || err.message || 'Failed to send email'}`);
-            });
-
-            await Promise.all([supabasePromise, emailjsPromise]);
-
-            alert(t('Form Success Alert') || 'Message sent successfully!');
-            setShowModal(false);
-            setFormData({ name: '', email: '', message: '' });
-
-        } catch (error) {
-            console.error('Submission Error:', error);
-            alert(`Oops! ${error.message}`);
-        } finally {
-            setIsSubmitting(false);
-        }
+        // Logic for handling other inputs if needed
     };
 
     if (loading) {
         return (
             <div className="detail-loading-container">
                 <div className="loader"></div>
-                <p>Loading item details...</p>
+                <p>{t('Marketplace Loading')}</p>
             </div>
         );
     }
@@ -138,43 +79,27 @@ const MarketplaceDetail = () => {
     if (!item) {
         return (
             <div className="detail-error-container">
-                <h2>Item Not Found</h2>
-                <p>The marketplace item you're looking for doesn't exist or has been removed.</p>
+                <h2>{t('Item Not Found')}</h2>
+                <p>{t('Item Error Desc')}</p>
                 <Link to="/marketplace" className="back-btn-solid">
-                    <ArrowLeft size="18" /> Back to Marketplace
+                    <ArrowLeft size="18" /> {t('Back to Marketplace')}
                 </Link>
             </div>
         );
     }
 
     return (
-        <div className="marketplace-detail-page">
-            <section className="detail-hero">
-                <div className="detail-container">
-                    <div className="breadcrumb-wrapper">
-                        <Link to="/" className="breadcrumb-link">
-                            <Home2 size="16" variant="Bold" />
-                            <span>Home</span>
-                        </Link>
-                        <span className="breadcrumb-separator">/</span>
-                        <Link to="/marketplace" className="breadcrumb-link">
-                            <span>Marketplace</span>
-                        </Link>
-                        <span className="breadcrumb-separator">/</span>
-                        <span className="breadcrumb-current">{item.title}</span>
-                    </div>
-
-                    <div className="detail-header">
-                        <div>
-                            <span className="detail-category-tag">{item.category.toUpperCase()}</span>
-                            <h1 className="detail-title">{item.title}</h1>
-                        </div>
-                        {item.price && <div className="detail-price-tag">{item.price}</div>}
-                    </div>
+        <div className="marketplace-detail-page" style={{ backgroundColor: '#fff' }}>
+            {/* Page Header / Back Button Only */}
+            <div style={{ borderBottom: '1px solid #eee', position: 'sticky', top: 0, backgroundColor: '#fff', zIndex: 100 }}>
+                <div className="detail-container" style={{ display: 'flex', alignItems: 'center', padding: '16px 20px' }}>
+                    <Link to="/marketplace" style={{ color: '#001F3F', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', fontSize: '14px', fontWeight: '600' }}>
+                        <ArrowLeft size="18" /> {t('Back')}
+                    </Link>
                 </div>
-            </section>
+            </div>
 
-            <section className="detail-main-content">
+            <section className="detail-main-content" style={{ paddingTop: '60px', paddingBottom: '80px' }}>
                 <div className="detail-container">
                     <div className="detail-grid">
                         {/* Gallery Section */}
@@ -198,120 +123,52 @@ const MarketplaceDetail = () => {
                         </div>
 
                         {/* Info Section */}
-                        <div className="detail-info-column">
-                            <div className="info-card">
-                                <h3><Information size="20" variant="Bulk" color="#001F3F" /> Item Description</h3>
-                                <p className="description-text">{item.longDescription || item.description}</p>
-
-                                <div className="specifications-list">
-                                    <h4>Key Specifications</h4>
-                                    <ul>
-                                        <li><strong>Category:</strong> {item.category}</li>
-                                        <li><strong>Availability:</strong> Immediate</li>
-                                        <li><strong>Location:</strong> Port Harcourt, Nigeria</li>
-                                        {item.tags && item.tags.length > 0 && (
-                                            <li><strong>Tags:</strong> {item.tags.join(', ')}</li>
-                                        )}
-                                    </ul>
-                                </div>
-
-                                <div className="inquiry-actions">
-                                    <h4>Interested in this item?</h4>
-                                    <div className="action-buttons">
-                                        <button
-                                            onClick={() => setShowModal(true)}
-                                            className="action-btn-primary"
-                                            style={{ border: 'none', cursor: 'pointer', fontSize: '16px' }}
-                                        >
-                                            <Sms size="18" /> Send Inquiry
-                                        </button>
-                                        <a href="tel:+2348066184330" className="action-btn-secondary">
-                                            <Call size="18" /> Call Support
-                                        </a>
-                                    </div>
-                                </div>
+                        <div className="info-card">
+                            <div style={{ marginBottom: '20px' }}>
+                                <span className="detail-category-tag" style={{ backgroundColor: '#E6F1FF', color: '#0056b3', padding: '6px 12px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold' }}>{item.category.toUpperCase()}</span>
+                                <h1 className="detail-title" style={{ fontSize: '24px', marginTop: '8px', marginBottom: '4px', color: '#001F3F' }}>{item.title}</h1>
+                                {item.price && <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#00B341' }}>{item.price.toString().startsWith('₦') ? item.price : `₦${item.price}`}</div>}
                             </div>
 
-                            <div className="support-card-mini">
-                                <img src="/images/support-rep.jpg" alt="Support Rep" className="rep-avatar" />
-                                <div>
-                                    <h5>Maritime Consultant</h5>
-                                    <p>Ready to assist with your procurement.</p>
-                                </div>
+                            <h3><Information size="20" variant="Bulk" color="#001F3F" /> {t('Item Description')}</h3>
+                            <p className="description-text">{item.longDescription || item.description}</p>
+
+                            <div className="specifications-list">
+                                <h4>{t('Key Specifications')}</h4>
+                                <ul>
+                                    <li><strong>{t('Label Category')}</strong> {item.category}</li>
+                                    <li><strong>{t('Label Availability')}</strong> {item.availability || t('Immediate')}</li>
+                                    <li><strong>{t('Label Location')}</strong> {item.location || t('Default Location')}</li>
+                                    {item.dynamicTags && item.dynamicTags.length > 0 ? (
+                                        <li><strong>{t('Label Tags')}</strong> {item.dynamicTags.join(', ')}</li>
+                                    ) : item.tags && item.tags.length > 0 && (
+                                        <li><strong>{t('Label Tags')}</strong> {item.tags.join(', ')}</li>
+                                    )}
+                                </ul>
+                            </div>
+
+                            <div className="inquiry-actions">
+                                <Link
+                                    to={`/marketplace-inquiry/${item.id}`}
+                                    className="action-btn-primary"
+                                    style={{ border: 'none', cursor: 'pointer', fontSize: '16px', padding: '16px 32px', textDecoration: 'none', display: 'flex', width: '100%', borderRadius: '8px' }}
+                                >
+                                    <Sms size="20" variant="Bulk" /> {t('Send Inquiry Detail')}
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="support-card-mini">
+                            <img src="/images/support-rep.jpg" alt="Support Rep" className="rep-avatar" />
+                            <div>
+                                <h5>{t('Maritime Consultant')}</h5>
+                                <p>{t('Consultant Ready')}</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
-            {/* Inquiry Modal */}
-            {
-                showModal && (
-                    <div className="inquiry-modal-overlay">
-                        <div className="inquiry-modal-content">
-                            <button className="close-modal-btn" onClick={() => setShowModal(false)}>
-                                <CloseCircle size="24" color="#FF8A65" />
-                            </button>
-
-                            <h3>Inquire about {item.title}</h3>
-                            <p className="modal-subtitle">Fill out the form below and our team will get back to you regarding this vessel.</p>
-
-                            <form onSubmit={handleSubmit} className="inquiry-modal-form">
-                                <div className="form-group-modal">
-                                    <label>Full Name</label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        required
-                                        placeholder="Enter your name"
-                                    />
-                                </div>
-
-                                <div className="form-group-modal">
-                                    <label>Email Address</label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleInputChange}
-                                        required
-                                        placeholder="Enter your email"
-                                    />
-                                </div>
-
-                                <div className="form-group-modal">
-                                    <label>Subject</label>
-                                    <input
-                                        type="text"
-                                        value={`Inquiry: ${item.title}`}
-                                        disabled
-                                        className="disabled-input"
-                                    />
-                                </div>
-
-                                <div className="form-group-modal">
-                                    <label>Message</label>
-                                    <textarea
-                                        name="message"
-                                        value={formData.message}
-                                        onChange={handleInputChange}
-                                        required
-                                        placeholder="I am interested in this vessel..."
-                                        rows="4"
-                                    ></textarea>
-                                </div>
-
-                                <button type="submit" className="submit-inquiry-btn" disabled={isSubmitting}>
-                                    {isSubmitting ? 'Sending...' : 'Send Inquiry'}
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                )
-            }
-        </div >
+        </div>
     );
 };
 

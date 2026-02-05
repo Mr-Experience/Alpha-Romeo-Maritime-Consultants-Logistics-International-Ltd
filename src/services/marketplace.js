@@ -87,6 +87,33 @@ export const deleteMarketplaceItem = async (id) => {
     }
 };
 
+export const updateMarketplaceItem = async (id, item) => {
+    try {
+        const token = getSession();
+        if (!token) throw new Error('No authentication token found');
+
+        const response = await fetch(`${config.supabaseUrl}/rest/v1/marketplace_items?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': config.supabaseAnonKey,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(item)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update marketplace item');
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Error updating marketplace item:", error);
+        throw error;
+    }
+};
+
 export const uploadImage = async (file) => {
     try {
         const token = getSession();

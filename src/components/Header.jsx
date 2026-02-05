@@ -27,6 +27,26 @@ const Header = () => {
     }, []);
 
 
+    // Close mobile menu if scroll is attempted
+    useEffect(() => {
+        const handleScroll = () => {
+            if (mobileMenuOpen) {
+                setMobileMenuOpen(false);
+            }
+        };
+
+        if (mobileMenuOpen) {
+            window.addEventListener('scroll', handleScroll);
+            // Also listen for touchmove to be proactive on mobile
+            window.addEventListener('touchmove', handleScroll, { passive: true });
+        }
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('touchmove', handleScroll);
+        };
+    }, [mobileMenuOpen]);
+
     // Auto-close menu on active link click or scroll logic can be added here
     useEffect(() => {
         setMobileMenuOpen(false);

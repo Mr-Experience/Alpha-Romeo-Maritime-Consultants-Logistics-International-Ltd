@@ -29,3 +29,26 @@ export const fetchMessages = async () => {
         throw error;
     }
 };
+export const submitMessage = async (payload) => {
+    try {
+        const response = await fetch(`${config.supabaseUrl}/rest/v1/contact_messages`, {
+            method: 'POST',
+            headers: {
+                'apikey': config.supabaseAnonKey,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to send message');
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Submission Error:', error);
+        throw error;
+    }
+};

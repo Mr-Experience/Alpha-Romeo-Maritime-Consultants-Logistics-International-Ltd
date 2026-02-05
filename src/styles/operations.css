@@ -13,6 +13,8 @@
 .operations-page {
     background-color: var(--white);
     min-height: 100vh;
+    padding-top: 100px;
+    /* Offset for fixed header */
 }
 
 .operations-container {
@@ -78,13 +80,18 @@
 }
 
 /* Category Tabs */
+.marketplace-filters-section {
+    background-color: var(--white);
+    padding: 32px 0 0;
+    border-bottom: 1px solid #E5E7EB;
+}
+
 .category-tabs-container {
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
     padding-bottom: 0;
-    border-bottom: 1px solid #E5E7EB;
-    margin-bottom: 40px;
+    margin-bottom: 0;
 }
 
 .category-tabs {
@@ -99,25 +106,33 @@
 .category-tab {
     background: none;
     border: none;
-    padding: 16px 0;
-    border-bottom: 4px solid transparent;
-    /* 4px thick underline spacer */
-    border-radius: 0;
-    color: var(--text-muted);
+    padding: 16px 8px;
     font-family: 'Manrope', sans-serif;
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.category-tab:after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: var(--ocean-blue);
+    transition: width 0.3s ease;
 }
 
 .category-tab.active {
     color: var(--navy-blue);
-    border-bottom-color: var(--navy-blue);
-    /* 4px thick underline */
-    font-weight: 700;
-    background-color: transparent;
+}
+
+.category-tab.active:after {
+    width: 100%;
 }
 
 .category-tab:hover {
@@ -261,14 +276,14 @@
         padding: 100px 0 40px;
     }
 
-    .operations-title {
+    .detail-title {
         font-size: 32px;
     }
 }
 
 /* Marketplace Detail Page Styles */
 .marketplace-detail-page {
-    padding-top: 140px;
+    padding-top: 0;
 }
 
 .detail-hero {
@@ -486,14 +501,7 @@
     color: #666;
 }
 
-.detail-grid {
-    grid-template-columns: 1fr;
-}
 
-.detail-title {
-    font-size: 32px;
-}
-}
 
 @media (max-width: 500px) {
 

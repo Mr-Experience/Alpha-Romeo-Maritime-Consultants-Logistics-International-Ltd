@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from '../context/TranslationContext';
-import { Link } from 'react-router-dom';
+import { submitProposal } from '../services/proposals';
 
 const PartnershipForm = () => {
     const { t } = useTranslation();
@@ -12,7 +12,7 @@ const PartnershipForm = () => {
         serviceInterest: 'logistics',
         message: ''
     });
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState(''); // idle, sending, success, error
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,22 +23,10 @@ const PartnershipForm = () => {
         e.preventDefault();
         setStatus('sending');
 
-        // Simulating Backend and Email Forwarding
-        setTimeout(() => {
-            // 1. Save to LocalStorage for Dashboard
-            const newProposal = {
-                id: Date.now(),
-                ...formData,
-                date: new Date().toISOString(),
-                status: 'new'
-            };
+        try {
+            await submitProposal(formData);
 
-            const existingProposals = JSON.parse(localStorage.getItem('partnershipProposals') || '[]');
-            localStorage.setItem('partnershipProposals', JSON.stringify([newProposal, ...existingProposals]));
-
-            // 2. Simulate Email Forwarding
-            console.log(`[Email Simulation] Forwarding proposal from ${formData.companyName} to info@romeoalphamaritime.com`);
-
+            // Success
             setStatus('success');
             setFormData({
                 companyName: '',
@@ -48,8 +36,16 @@ const PartnershipForm = () => {
                 serviceInterest: 'logistics',
                 message: ''
             });
-        }, 1500);
+
+            // Auto-clear success message after 5s
+            setTimeout(() => setStatus(''), 5000);
+        } catch (error) {
+            console.error('Error submitting proposal:', error);
+            setStatus('error');
+            alert(`Error: ${error.message}`);
+        }
     };
+
 
     return (
         <div className="page-wrapper">

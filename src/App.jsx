@@ -11,6 +11,7 @@ import Careers from './components/Careers';
 import Contact from './components/Contact';
 import Marketplace from './components/Marketplace';
 import MarketplaceDetail from './components/MarketplaceDetail';
+import MarketplaceInquiry from './components/MarketplaceInquiry';
 import OperationDetail from './components/OperationDetail';
 import ServiceMaritime from './components/ServiceMaritime';
 import ServiceCharter from './components/ServiceCharter';
@@ -48,10 +49,12 @@ const AppContentWithLocation = () => {
   const location = useLocation();
   const isDashboard = location.pathname === '/admin-dashboard';
   const isLogin = location.pathname === '/admin-login';
+  const isMarketplaceDetail = location.pathname.startsWith('/marketplace/');
+  const isMarketplaceInquiry = location.pathname.startsWith('/marketplace-inquiry/');
 
   return (
     <div className="page-wrapper">
-      {!isDashboard && <Header />}
+      {!isDashboard && !isMarketplaceDetail && !isMarketplaceInquiry && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -61,6 +64,7 @@ const AppContentWithLocation = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/marketplace/:id" element={<MarketplaceDetail />} />
+        <Route path="/marketplace-inquiry/:id" element={<MarketplaceInquiry />} />
         <Route path="/operation-detail" element={<OperationDetail />} />
         <Route path="/service/maritime" element={<ServiceMaritime />} />
         <Route path="/service/charter" element={<ServiceCharter />} />
@@ -70,7 +74,7 @@ const AppContentWithLocation = () => {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/partnership" element={<PartnershipForm />} />
       </Routes>
-      {!isLogin && !isDashboard && <Footer />}
+      {!isLogin && !isDashboard && !isMarketplaceDetail && !isMarketplaceInquiry && <Footer />}
     </div>
   );
 };

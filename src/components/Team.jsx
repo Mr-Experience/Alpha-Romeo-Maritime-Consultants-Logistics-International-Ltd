@@ -1,13 +1,25 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from '../context/TranslationContext';
+import { fetchTeam } from '../services/team';
 import '../styles/team.css';
 
 const Team = () => {
     const { t } = useTranslation();
+    const [teamMembers, setTeamMembers] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        const loadTeam = async () => {
+            try {
+                const data = await fetchTeam();
+                setTeamMembers(data);
+            } catch (err) {
+                console.error("Team loading error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadTeam();
     }, []);
 
     return (
@@ -75,64 +87,59 @@ const Team = () => {
                     <div className="header-line"></div>
                 </div>
                 <div className="team-container">
+                    {teamMembers.length > 0 ? (
+                        teamMembers.map((member) => (
+                            <div className="team-card" key={member.id}>
+                                <div className="team-img-wrapper">
+                                    {member.image_url ? (
+                                        <img src={member.image_url} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <div className="team-img-placeholder" style={{ backgroundColor: '#F3F4F6' }}></div>
+                                    )}
+                                </div>
+                                <div className="team-info">
+                                    <h3 className="team-name">{member.name}</h3>
+                                    <p className="team-role">{member.role}</p>
+                                    <p className="team-bio">
+                                        {member.bio}
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        // Fallback/Default Team Members
+                        <>
+                            {/* Team Member 1 */}
+                            <div className="team-card">
+                                <div className="team-img-wrapper">
+                                    <div className="team-img-placeholder" style={{ backgroundColor: '#F3F4F6' }}></div>
+                                </div>
+                                <div className="team-info">
+                                    <h3 className="team-name">{t('Sarah Name')}</h3>
+                                    <p className="team-role">Head of Operations</p>
+                                    <p className="team-bio">
+                                        {t('Sarah Bio')}
+                                    </p>
+                                </div>
+                            </div>
 
-                    {/* Team Member 1 */}
-                    <div className="team-card">
-                        <div className="team-img-wrapper">
-                            <div className="team-img-placeholder" style={{ backgroundColor: '#F3F4F6' }}></div>
-                        </div>
-                        <div className="team-info">
-                            <h3 className="team-name">{t('Sarah Name')}</h3>
-                            <p className="team-role">Head of Operations</p>
-                            <p className="team-bio">
-                                {t('Sarah Bio')}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Team Member 2 */}
-                    <div className="team-card">
-                        <div className="team-img-wrapper">
-                            <div className="team-img-placeholder" style={{ backgroundColor: '#F3F4F6' }}></div>
-                        </div>
-                        <div className="team-info">
-                            <h3 className="team-name">{t('David Name')}</h3>
-                            <p className="team-role">Technical Director</p>
-                            <p className="team-bio">
-                                {t('David Bio')}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Team Member 3 */}
-                    <div className="team-card">
-                        <div className="team-img-wrapper">
-                            <div className="team-img-placeholder" style={{ backgroundColor: '#F3F4F6' }}></div>
-                        </div>
-                        <div className="team-info">
-                            <h3 className="team-name">{t('Elena Name')}</h3>
-                            <p className="team-role">Safety (HSE) Manager</p>
-                            <p className="team-bio">
-                                {t('Elena Bio')}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Team Member 4 */}
-                    <div className="team-card">
-                        <div className="team-img-wrapper">
-                            <div className="team-img-placeholder" style={{ backgroundColor: '#F3F4F6' }}></div>
-                        </div>
-                        <div className="team-info">
-                            <h3 className="team-name">{t('Marcus Name')}</h3>
-                            <p className="team-role">Fleet Manager</p>
-                            <p className="team-bio">
-                                {t('Marcus Bio')}
-                            </p>
-                        </div>
-                    </div>
-
+                            {/* Team Member 2 */}
+                            <div className="team-card">
+                                <div className="team-img-wrapper">
+                                    <div className="team-img-placeholder" style={{ backgroundColor: '#F3F4F6' }}></div>
+                                </div>
+                                <div className="team-info">
+                                    <h3 className="team-name">{t('David Name')}</h3>
+                                    <p className="team-role">Technical Director</p>
+                                    <p className="team-bio">
+                                        {t('David Bio')}
+                                    </p>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
+
 
             </section>
 
