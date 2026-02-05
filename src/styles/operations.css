@@ -23,9 +23,13 @@
 
 /* Hero & Search Section */
 .operations-hero {
-    padding: 136px 0 60px;
+    height: 300px;
+    padding: 0;
     background-color: var(--white);
     color: var(--navy-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
 }
 
@@ -127,9 +131,11 @@
 
 .operations-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 32px;
     row-gap: 48px;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 /* Operation Card */
